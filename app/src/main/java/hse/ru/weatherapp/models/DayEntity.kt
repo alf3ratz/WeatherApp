@@ -1,7 +1,6 @@
 package hse.ru.weatherapp.models
 
 import com.google.gson.annotations.SerializedName
-import hse.ru.weatherapp.models.FeelsLike
 
 
 class DayEntity {

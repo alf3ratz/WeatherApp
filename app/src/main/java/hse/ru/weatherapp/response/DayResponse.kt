@@ -1,4 +1,4 @@
-package hse.ru.avitoweather.responses
+package hse.ru.weatherapp.responses
 
 import com.google.gson.annotations.SerializedName
 import hse.ru.weatherapp.models.DayEntity

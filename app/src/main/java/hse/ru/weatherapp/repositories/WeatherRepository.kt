@@ -1,14 +1,14 @@
-package hse.ru.avitoweather.repositories
+package hse.ru.weatherapp.repositories
 
 import android.util.Log
 import androidx.annotation.NonNull
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import hse.ru.avitoweather.responses.DayResponse
-import hse.ru.avitoweather.responses.HourlyResponse
 import hse.ru.weatherapp.network.ApiClient
 import hse.ru.weatherapp.network.ApiService
 import hse.ru.weatherapp.response.WeatherResponse
+import hse.ru.weatherapp.responses.DayResponse
+import hse.ru.weatherapp.responses.HourlyResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

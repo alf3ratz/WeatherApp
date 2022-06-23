@@ -1,18 +1,14 @@
 package hse.ru.weatherapp.adapters
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import hse.ru.weatherapp.R
 import hse.ru.weatherapp.databinding.PagerContainerBinding
-import hse.ru.weatherapp.listeners.ImageListener
 import hse.ru.weatherapp.models.DayEntity
 import java.lang.NumberFormatException
 import java.time.Instant

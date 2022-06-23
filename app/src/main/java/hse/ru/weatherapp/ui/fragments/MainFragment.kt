@@ -26,9 +26,9 @@ import androidx.viewpager2.widget.MarginPageTransformer
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import hse.ru.avitoweather.responses.DayResponse
-import hse.ru.avitoweather.responses.HourlyResponse
-import hse.ru.avitoweather.viewmodels.WeatherViewModel
+import hse.ru.weatherapp.responses.DayResponse
+import hse.ru.weatherapp.responses.HourlyResponse
+import hse.ru.weatherapp.viewmodels.WeatherViewModel
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -40,18 +40,16 @@ import hse.ru.weatherapp.R
 import hse.ru.weatherapp.adapters.WeatherAdapter
 import hse.ru.weatherapp.adapters.WeatherPagerAdapter
 import hse.ru.weatherapp.databinding.WeatherFragmentBinding
-import hse.ru.weatherapp.listeners.ImageListener
 import hse.ru.weatherapp.models.DayEntity
 import hse.ru.weatherapp.models.HourEntity
 import hse.ru.weatherapp.response.WeatherResponse
 import hse.ru.weatherapp.ui.activities.MainActivity
 
 
-class MainFragment : Fragment(), ImageListener {
+class MainFragment : Fragment() {
 
     private var binding: WeatherFragmentBinding? = null
     private lateinit var viewModel: WeatherViewModel
-    private var hourlyWeather: ArrayList<HourEntity> = ArrayList()
     private var dailyWeather: ArrayList<DayEntity> = ArrayList()
     private lateinit var weatherAdapter: WeatherAdapter
     private lateinit var weatherPagerAdapter: WeatherPagerAdapter
@@ -86,12 +84,7 @@ class MainFragment : Fragment(), ImageListener {
 
     override fun onResume() {
         super.onResume()
-        Log.i("sheesh", "6")
-
         if (checkLocationPermission() && fusedLocationProviderClient != null) startLocationUpdates()
-        Log.i("sheesh", "7")
-
-        //else locationPermission()
     }
 
     /**
@@ -251,12 +244,7 @@ class MainFragment : Fragment(), ImageListener {
                     }
                 }
                 imageSettings.setOnClickListener {
-                    parentFragmentManager.beginTransaction()
-                        .replace(
-                            (binding!!.root.parent as View).id,
-                            SettingsFragment()
-                        )
-                        .addToBackStack(null).commit()
+                   // Здесь должен был быть переход на страницу настроек, но его не будет :)
                 }
             } catch (e: Exception) {
 
