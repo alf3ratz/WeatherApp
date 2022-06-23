@@ -1,4 +1,4 @@
-package hse.ru.avitoweather.listeners
+package hse.ru.weatherapp.listeners
 
 import hse.ru.weatherapp.models.HourEntity
 

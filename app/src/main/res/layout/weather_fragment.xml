@@ -15,6 +15,41 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <LinearLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="@color/hourly_weather_background_color"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageSettings"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:contentDescription="@string/app_name"
+                android:padding="@dimen/_2sdp"
+                android:src="@drawable/ic_settings"
+                app:tint="@color/black" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/themeSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_5sdp"
+                android:fontFamily="@font/ubuntu_bold"
+                android:text="Поменять тему"
+                app:switchPadding="@dimen/_5sdp" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/cityText"
             android:layout_width="wrap_content"
@@ -25,7 +60,7 @@
             android:text="Город: "
             android:textSize="@dimen/_18sdp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader" />
 
         <Spinner
             android:id="@+id/spinner"
@@ -37,7 +72,7 @@
             android:backgroundTintMode="add"
             android:entries="@array/cityNames"
             app:layout_constraintStart_toEndOf="@id/cityText"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
             tools:targetApi="lollipop" />
 
         <TextView
@@ -63,7 +98,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/lowerLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -124,6 +159,7 @@
                 android:layout_marginEnd="@dimen/_20sdp"
                 android:paddingTop="@dimen/_4sdp"
                 android:src="@drawable/ic_time"
+                android:shadowColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/viewBackground" />
 
@@ -135,6 +171,7 @@
                 android:layout_marginTop="@dimen/_2sdp"
                 android:fontFamily="@font/ubuntu_regular"
                 android:hint="Время"
+                android:textColor="@color/black"
                 android:paddingTop="@dimen/_4sdp"
                 android:text="@{`Время: ` + weatherInfo.dateTime}"
                 app:layout_constraintStart_toEndOf="@id/timeIcon"
@@ -156,6 +193,7 @@
                 android:layout_marginStart="@dimen/_2sdp"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:hint="Температура"
+                android:textColor="@color/black"
                 android:text="@{`Температура: ` + weatherInfo.temperature.dayTemp+`°C`}"
                 app:layout_constraintStart_toEndOf="@id/temperatureIcon"
                 app:layout_constraintTop_toBottomOf="@id/timeIcon" />
@@ -176,6 +214,7 @@
                 android:layout_marginStart="@dimen/_2sdp"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:hint="Погода"
+                android:textColor="@color/black"
                 android:text="@{`Погода: ` + weatherInfo.weather[0].description}"
                 app:layout_constraintStart_toEndOf="@id/weatherIcon"
                 app:layout_constraintTop_toBottomOf="@id/temperatureIcon" />
@@ -196,6 +235,7 @@
                 android:layout_marginStart="@dimen/_2sdp"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:hint="Влажность"
+                android:textColor="@color/black"
                 android:text="@{`Влажность: ` + weatherInfo.humidity+ `%`}"
                 app:layout_constraintStart_toEndOf="@id/humidityIcon"
                 app:layout_constraintTop_toBottomOf="@id/weatherIcon" />
@@ -216,6 +256,7 @@
                 android:layout_marginStart="@dimen/_2sdp"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:hint="Скорость ветра"
+                android:textColor="@color/black"
                 android:text="@{`Скорость ветра: ` + weatherInfo.speed+ `м/с`}"
                 app:layout_constraintStart_toEndOf="@id/speedIcon"
                 app:layout_constraintTop_toBottomOf="@id/humidityIcon" />
@@ -227,6 +268,7 @@
                 android:layout_marginEnd="@dimen/_20sdp"
                 android:paddingBottom="@dimen/_4sdp"
                 android:src="@drawable/ic_direction"
+                android:shadowColor="@color/black"
                 app:layout_constraintStart_toStartOf="@id/timeIcon"
                 app:layout_constraintTop_toBottomOf="@id/speedIcon" />
 
@@ -237,6 +279,7 @@
                 android:layout_marginStart="@dimen/_2sdp"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:hint="Давление"
+                android:textColor="@color/black"
                 android:text="@{`Давление: ` + weatherInfo.pressure}"
                 app:layout_constraintStart_toEndOf="@id/directionIcon"
                 app:layout_constraintTop_toBottomOf="@id/speedText" />

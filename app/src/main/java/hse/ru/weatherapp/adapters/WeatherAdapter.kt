@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import hse.ru.avitoweather.listeners.WeatherListener
 import hse.ru.weatherapp.R
 import hse.ru.weatherapp.databinding.DayContainerBinding
+import hse.ru.weatherapp.listeners.WeatherListener
 import hse.ru.weatherapp.models.HourEntity
 import java.time.Instant
 import java.time.ZoneId

@@ -3,6 +3,7 @@ package hse.ru.weatherapp.ui.fragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.IntentSender
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -15,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -33,19 +35,19 @@ import java.time.ZoneId
 import kotlin.math.abs
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
-import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationServices
 import hse.ru.weatherapp.R
 import hse.ru.weatherapp.adapters.WeatherAdapter
 import hse.ru.weatherapp.adapters.WeatherPagerAdapter
 import hse.ru.weatherapp.databinding.WeatherFragmentBinding
+import hse.ru.weatherapp.listeners.ImageListener
 import hse.ru.weatherapp.models.DayEntity
 import hse.ru.weatherapp.models.HourEntity
 import hse.ru.weatherapp.response.WeatherResponse
 import hse.ru.weatherapp.ui.activities.MainActivity
 
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), ImageListener {
 
     private var binding: WeatherFragmentBinding? = null
     private lateinit var viewModel: WeatherViewModel
@@ -60,6 +62,7 @@ class MainFragment : Fragment() {
     private lateinit var locationSettingsRequest: LocationSettingsRequest // Определние настроек девайса пользователя
     private lateinit var locationCallback: LocationCallback // События определения местоположения
     private var location: Location? = null// Широта и долгота пользователя
+    private lateinit var appSettingPrefs: SharedPreferences
 
     private val cities = arrayOf(
         "Moscow",
@@ -83,7 +86,11 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        Log.i("sheesh", "6")
+
         if (checkLocationPermission() && fusedLocationProviderClient != null) startLocationUpdates()
+        Log.i("sheesh", "7")
+
         //else locationPermission()
     }
 
@@ -118,6 +125,10 @@ class MainFragment : Fragment() {
             override fun onLocationResult(p0: LocationResult) {
                 super.onLocationResult(p0)
                 location = p0.lastLocation
+                if (location == null) {
+                    Toast.makeText(requireContext(), "Включите геолокацию", Toast.LENGTH_LONG)
+                        .show()
+                }
             }
         }
     }
@@ -151,7 +162,7 @@ class MainFragment : Fragment() {
                 requireActivity(), Array(1) { Manifest.permission.ACCESS_FINE_LOCATION },
                 SETTINGS_CODE
             )
-
+            Toast.makeText(requireContext(), "Включите геолокацию", Toast.LENGTH_LONG).show()
         } else if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION
@@ -161,6 +172,7 @@ class MainFragment : Fragment() {
                 requireActivity(), Array(1) { Manifest.permission.ACCESS_COARSE_LOCATION },
                 SETTINGS_CODE
             )
+            Toast.makeText(requireContext(), "Включите геолокацию", Toast.LENGTH_LONG).show()
         } else {
             setLocation()
         }
@@ -207,6 +219,49 @@ class MainFragment : Fragment() {
     ): View {
         binding = WeatherFragmentBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this).get(WeatherViewModel::class.java)
+        appSettingPrefs = this.requireActivity()
+            .getSharedPreferences("AppSettingPrefs", 0)
+        val isNightModeOn: Boolean = appSettingPrefs.getBoolean("NightMode", false)
+        binding!!.apply {
+            try {
+                spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        itemSelected: View, position: Int, selectedId: Long
+                    ) {
+                        makeChoise(position)
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                }
+                themeSwitch.isChecked = isNightModeOn
+                if (isNightModeOn) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                }
+                themeSwitch.setOnClickListener {
+                    val sharedPrefsEdit: SharedPreferences.Editor = appSettingPrefs.edit()
+                    if (isNightModeOn) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        sharedPrefsEdit.putBoolean("NightMode", false)
+                        sharedPrefsEdit.apply()
+                    } else {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                        sharedPrefsEdit.putBoolean("NightMode", true)
+                        sharedPrefsEdit.apply()
+                    }
+                }
+                imageSettings.setOnClickListener {
+                    parentFragmentManager.beginTransaction()
+                        .replace(
+                            (binding!!.root.parent as View).id,
+                            SettingsFragment()
+                        )
+                        .addToBackStack(null).commit()
+                }
+            } catch (e: Exception) {
+
+            }
+        }
         return binding!!.root
     }
 
@@ -214,18 +269,6 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadViewPager()
-        binding!!.apply {
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    itemSelected: View, position: Int, selectedId: Long
-                ) {
-                    makeChoise(position)
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
-            }
-        }
     }
 
     /**
@@ -235,6 +278,7 @@ class MainFragment : Fragment() {
         if (dailyWeather.isNotEmpty()) {
             dailyWeather.clear()
         }
+        Log.i("sheesh", "9")
         when (cities[position]) {
             "Moscow" -> getWeatherAtLastDay("55.749804", "37.621059", position)
             "Kazan" -> getWeatherAtLastDay("55.796127", "49.106414", position)
@@ -282,11 +326,11 @@ class MainFragment : Fragment() {
                         location?.longitude.toString(), position
                     )
                 } else {
-                    Log.i("failed", "fail2")
+                    Toast.makeText(requireContext(), "Включите геолокацию", Toast.LENGTH_LONG)
+                        .show()
                 }
             } else {
                 weatherPagerAdapter.notifyDataSetChanged()
-                Log.i("failed", "fail1")
             }
         }
 
@@ -296,7 +340,7 @@ class MainFragment : Fragment() {
      * Создание адаптера для погоды на неделю.
      */
     private fun loadViewPager() {
-        weatherPagerAdapter = WeatherPagerAdapter(dailyWeather)
+        weatherPagerAdapter = WeatherPagerAdapter(dailyWeather, requireContext())
         binding!!.viewPager.apply {
             offscreenPageLimit = 3
             adapter = weatherPagerAdapter
@@ -307,8 +351,7 @@ class MainFragment : Fragment() {
             compositePageTransformer.addTransformer(MarginPageTransformer(40))
             compositePageTransformer.addTransformer { page, position ->
                 val r = 1 - abs(position)
-                page.scaleY = /*0.85f*/0.85f + r * 0.15f
-                // page.
+                page.scaleY = 0.85f + r * 0.15f
             }
             setPageTransformer(compositePageTransformer)
         }
@@ -317,42 +360,43 @@ class MainFragment : Fragment() {
     private fun getCityWeather(city: String) {
         viewModel.getCityWeather(city, "d8c067ca50fc4748821b35656cca8e56")
             .observe(
-                (activity as MainActivity),
-                { response: WeatherResponse? ->
-                    if (response != null) {
-                        //binding.weatherText.text = response.weather!![0].description
-                    } else {
-                        Toast.makeText(context, "Что-то пошло не так", Toast.LENGTH_LONG)
-                            .show()
-                    }
-                })
+                (activity as MainActivity)
+            ) { response: WeatherResponse? ->
+                if (response != null) {
+                    //binding.weatherText.text = response.weather!![0].description
+                } else {
+                    Toast.makeText(context, "Что-то пошло не так", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getWeatherAtLastHour(city: String) {
         viewModel.getWeatherAtLastHour("d8c067ca50fc4748821b35656cca8e56")
             .observe(
-                (activity as MainActivity),
-                { response: HourlyResponse? ->
-                    if (response != null) {
-                        val purposeHour = findLastHourWeather(response.hourlyWeather)
-                        //binding.weatherTextForHour.text =
-                        purposeHour.weather[0].description//response.weather!![0].description
-                        //weatherElements.addAll(response.hourlyWeather)
-                        //binding_.weatherInfo = purposeHour
-                        weatherAdapter.notifyDataSetChanged()
-                        weatherPagerAdapter.notifyDataSetChanged()
-                    } else {
-                        Toast.makeText(context, "Что-то пошло не так", Toast.LENGTH_LONG)
-                            .show()
-                    }
-                })
+                (activity as MainActivity)
+            ) { response: HourlyResponse? ->
+                if (response != null) {
+                    val purposeHour = findLastHourWeather(response.hourlyWeather)
+                    //binding.weatherTextForHour.text =
+                    purposeHour.weather[0].description//response.weather!![0].description
+                    //weatherElements.addAll(response.hourlyWeather)
+                    //binding_.weatherInfo = purposeHour
+                    weatherAdapter.notifyDataSetChanged()
+                    weatherPagerAdapter.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(context, "Что-то пошло не так", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
     }
 
     /**
      * Получение погоды за сегодняшний день и за неделю.
      */
     private fun getWeatherAtLastDay(lat: String, lon: String, position: Int) {
+        Log.i("sheesh", "8")
         viewModel.getWeatherAtLastDay(lat, lon, "d8c067ca50fc4748821b35656cca8e56")
             .observe((activity as MainActivity)) { response: DayResponse? ->
                 if (response != null) {
@@ -363,11 +407,6 @@ class MainFragment : Fragment() {
                             response.dayWeatherInfo.size
                         )
                     )
-                    Toast.makeText(
-                        context,
-                        "${dailyWeather.size}",
-                        Toast.LENGTH_LONG
-                    ).show()
                     weatherPagerAdapter.notifyDataSetChanged()
                     val cities = resources.getStringArray(R.array.cityNames)
                     dayEntity.apply {
@@ -410,10 +449,10 @@ class MainFragment : Fragment() {
     }
 
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
-    }
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        binding = null
+//    }
 
     companion object {
         private const val SETTINGS_CODE: Int = 123

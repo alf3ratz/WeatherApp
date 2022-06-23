@@ -1,10 +1,6 @@
 package hse.ru.weatherapp.models
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.google.gson.annotations.SerializedName
-import java.time.Instant
-import java.util.*
 import kotlin.collections.ArrayList
 
 class HourEntity {

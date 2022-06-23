@@ -1,7 +1,8 @@
 package hse.ru.weatherapp.models
 
 import com.google.gson.annotations.SerializedName
-import hse.ru.avitoweather.models.FeelsLike
+import hse.ru.weatherapp.models.FeelsLike
+
 
 class DayEntity {
     var cityName: String = ""

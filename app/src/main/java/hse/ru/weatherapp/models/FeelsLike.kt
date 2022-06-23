@@ -1,4 +1,4 @@
-package hse.ru.avitoweather.models
+package hse.ru.weatherapp.models
 
 import com.google.gson.annotations.SerializedName
 
