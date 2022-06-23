@@ -1,6 +1,5 @@
 package hse.ru.weatherapp.repositories
 
-import android.util.Log
 import androidx.annotation.NonNull
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,7 +20,6 @@ class WeatherRepository {
         apiService.getCityWeather(city, apiKey).enqueue(object : Callback<WeatherResponse> {
             override fun onFailure(@NonNull call: Call<WeatherResponse>, t: Throwable) {
                 data.value = null
-                Log.i("fal", "upalo\n${call.request().body()}")
             }
 
             override fun onResponse(
@@ -29,7 +27,6 @@ class WeatherRepository {
                 @NonNull response: Response<WeatherResponse>
             ) {
                 data.value = response.body()
-                Log.i("fal", "ne upalo\n${response.isSuccessful}")
             }
         })
         return data
@@ -40,7 +37,6 @@ class WeatherRepository {
         apiService.getWeatherAtLastHour(apiKey).enqueue(object : Callback<HourlyResponse> {
             override fun onFailure(@NonNull call: Call<HourlyResponse>, t: Throwable) {
                 data.value = null
-                Log.i("fal", "upalo\n${call.request().body()}")
             }
 
             override fun onResponse(
@@ -48,7 +44,6 @@ class WeatherRepository {
                 @NonNull response: Response<HourlyResponse>
             ) {
                 data.value = response.body()
-                Log.i("fal", "ne upalo\n${response.isSuccessful}")
             }
         })
         return data
@@ -58,7 +53,6 @@ class WeatherRepository {
         apiService.getWeatherAtLastDay(lat,lon,apiKey).enqueue(object : Callback<DayResponse> {
             override fun onFailure(@NonNull call: Call<DayResponse>, t: Throwable) {
                 data.value = null
-                Log.i("fal", "upalo\n${t.message}")
             }
 
             override fun onResponse(
@@ -66,7 +60,6 @@ class WeatherRepository {
                 @NonNull response: Response<DayResponse>
             ) {
                 data.value = response.body()
-                Log.i("fal", "ne upalo\n${response.isSuccessful}")
             }
         })
         return data

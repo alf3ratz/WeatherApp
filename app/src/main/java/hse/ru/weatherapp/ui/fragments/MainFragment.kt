@@ -266,7 +266,6 @@ class MainFragment : Fragment() {
         if (dailyWeather.isNotEmpty()) {
             dailyWeather.clear()
         }
-        Log.i("sheesh", "9")
         when (cities[position]) {
             "Moscow" -> getWeatherAtLastDay("55.749804", "37.621059", position)
             "Kazan" -> getWeatherAtLastDay("55.796127", "49.106414", position)
@@ -384,7 +383,6 @@ class MainFragment : Fragment() {
      * Получение погоды за сегодняшний день и за неделю.
      */
     private fun getWeatherAtLastDay(lat: String, lon: String, position: Int) {
-        Log.i("sheesh", "8")
         viewModel.getWeatherAtLastDay(lat, lon, "d8c067ca50fc4748821b35656cca8e56")
             .observe((activity as MainActivity)) { response: DayResponse? ->
                 if (response != null) {
